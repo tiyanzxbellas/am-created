@@ -118,7 +118,6 @@
       transform: translateY(0);
     }
 
-    /* Grid bg */
     .card::before {
       content: '';
       position: absolute; inset: 0;
@@ -155,7 +154,6 @@
     }
     .app-sub { font-size: 11px; color: #37474f; letter-spacing: 2px; text-transform: uppercase; }
 
-    /* TUTORIAL BUTTON - Icon Video + Text */
     .tutorial-trigger {
       position: absolute;
       top: 0;
@@ -175,19 +173,14 @@
       text-decoration: none;
       letter-spacing: 0.3px;
     }
-    .tutorial-trigger i {
-      font-size: 16px;
-    }
+    .tutorial-trigger i { font-size: 16px; }
     .tutorial-trigger:hover {
       background: rgba(0,230,118,0.16);
       transform: scale(1.03);
       box-shadow: 0 0 20px rgba(0,230,118,0.15);
       border-color: rgba(0,230,118,0.3);
     }
-    .tutorial-trigger .label-text {
-      font-size: 11px;
-      opacity: 0.8;
-    }
+    .tutorial-trigger .label-text { font-size: 11px; opacity: 0.8; }
 
     /* STATUS */
     .status-bar {
@@ -272,6 +265,22 @@
       transition: left 0.5s ease;
     }
     .btn-main:hover::after { left: 150%; }
+
+    /* STEP INDICATOR */
+    .step-indicator {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .step-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      background: #1e2a2a;
+      transition: all 0.4s ease;
+    }
+    .step-dot.active { background: #00e676; box-shadow: 0 0 12px rgba(0,230,118,0.4); }
+    .step-dot.done { background: #00897b; }
 
     /* PROCESSING */
     #processing {
@@ -543,6 +552,15 @@
       .tutorial-trigger { padding: 4px 10px 4px 8px; }
       .tutorial-trigger .label-text { font-size: 10px; }
     }
+
+    /* VERIFICATION SECTION (muncul setelah send) */
+    #verify-section {
+      display: none;
+      animation: slide-up 0.5s ease;
+    }
+    #verify-section.show {
+      display: block;
+    }
   </style>
 </head>
 <body>
@@ -568,7 +586,6 @@
       <div class="logo-mark">A</div>
       <div class="app-title">Am Created</div>
       <div class="app-sub">Premium Email Manager</div>
-      <!-- TOMBOL TUTORIAL IKON VIDEO + TEXT "PANDUAN" -->
       <div class="tutorial-trigger" id="tutorialBtn" title="Lihat Tutorial">
         <i class="ti ti-player-play-filled"></i>
         <span class="label-text">Panduan</span>
@@ -580,22 +597,30 @@
       <span>Sistem aktif &mdash; API terhubung</span>
     </div>
 
-    <!-- FORM UTAMA -->
-    <div class="field">
-      <label><i class="ti ti-mail"></i> Email Target</label>
-      <input type="email" id="email-target" placeholder="Masukkan email target" />
+    <!-- STEP INDICATOR -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="step1"></div>
+      <div class="step-dot" id="step2"></div>
     </div>
 
-    <div class="field">
-      <label><i class="ti ti-link"></i> Link Verifikasi</label>
-      <textarea id="link-verify" placeholder="Tempel link verifikasi dari email di sini..."></textarea>
-      <div class="hint-text">Kosongkan jika hanya ingin mengirim link verifikasi ke email</div>
-    </div>
-
-    <div class="action-row">
+    <!-- STEP 1: EMAIL TARGET -->
+    <div id="step-email">
+      <div class="field">
+        <label><i class="ti ti-mail"></i> Email Target</label>
+        <input type="email" id="email-target" placeholder="Masukkan email target" />
+      </div>
       <button class="btn-main btn-send-link" onclick="doSendLink()" id="btn-send">
         <i class="ti ti-send"></i> Kirim Link
       </button>
+    </div>
+
+    <!-- STEP 2: VERIFICATION (muncul setelah send berhasil) -->
+    <div id="verify-section">
+      <div class="field">
+        <label><i class="ti ti-link"></i> Link Verifikasi</label>
+        <textarea id="link-verify" placeholder="Tempel link verifikasi dari email di sini..."></textarea>
+        <div class="hint-text">Kosongkan jika hanya ingin mengirim link verifikasi ke email</div>
+      </div>
       <button class="btn-main btn-verify-only" onclick="doVerify()" id="btn-verify">
         <i class="ti ti-shield-check"></i> Verifikasi
       </button>
@@ -734,6 +759,7 @@
       if (e.target === tutorialModal) tutorialModal.classList.remove('active');
     });
 
+    // UI Helpers
     function showProcessing(label) {
       document.getElementById('proc-label').textContent = label;
       document.getElementById('processing').classList.add('show');
@@ -756,7 +782,7 @@
       return document.getElementById('link-verify').value.trim();
     }
 
-    function showSuccess(emailVal, data) {
+    function showSuccess(emailVal, data, isVerify = false) {
       const box = document.getElementById('response-box');
       document.getElementById('resp-header').className = 'resp-header success';
       document.getElementById('resp-icon').className = 'ti ti-circle-check';
@@ -786,7 +812,29 @@
       box.classList.add('show');
     }
 
-    // Kirim Link saja
+    // Step management
+    function goToStep(step) {
+      const step1 = document.getElementById('step1');
+      const step2 = document.getElementById('step2');
+      const emailStep = document.getElementById('step-email');
+      const verifySection = document.getElementById('verify-section');
+
+      if (step === 1) {
+        step1.className = 'step-dot active';
+        step2.className = 'step-dot';
+        emailStep.style.display = 'block';
+        verifySection.classList.remove('show');
+        verifySection.style.display = 'none';
+      } else {
+        step1.className = 'step-dot done';
+        step2.className = 'step-dot active';
+        emailStep.style.display = 'none';
+        verifySection.style.display = 'block';
+        setTimeout(() => verifySection.classList.add('show'), 50);
+      }
+    }
+
+    // Kirim Link (STEP 1)
     async function doSendLink() {
       const email = getEmail();
       if (!email || !email.includes('@')) { showError('Masukkan email yang valid.'); return; }
@@ -801,14 +849,38 @@
         });
         const data = await res.json();
         hideProcessing();
-        (res.ok && data.status) ? showSuccess(email, data) : showError(JSON.stringify(data, null, 2));
+        if (res.ok && data.status) {
+          // Tampilkan response sukses dengan instruksi
+          const box = document.getElementById('response-box');
+          document.getElementById('resp-header').className = 'resp-header success';
+          document.getElementById('resp-icon').className = 'ti ti-circle-check';
+          document.getElementById('resp-title').textContent = '📬 Verifikasi Berhasil Dikirim!';
+          let html = `<div class="resp-message">Silakan ikuti instruksi berikut untuk melanjutkan proses login:</div>`;
+          html += `<ul class="resp-steps">
+            <li class="resp-step"><div class="step-num">1</div><span><strong>Buka Aplikasi Gmail</strong> di ponsel Anda.</span></li>
+            <li class="resp-step"><div class="step-num">2</div><span><strong>Cek Folder Spam</strong> (atau kotak masuk utama jika tidak ada).</span></li>
+            <li class="resp-step"><div class="step-num">3</div><span><strong>Cari Email dari:</strong> noreply [ <code style="color:#00e676;">noreply@alight-creative.firebaseapp.com</code> ]. Biasanya email ini berada di baris paling atas karena baru saja dikirim.</span></li>
+            <li class="resp-step"><div class="step-num">4</div><span><strong>Buka Email Tersebut</strong>, lalu ketuk dan <strong>TAHAN LAMA</strong> pada tombol atau teks <strong>Login ke Alight Creative</strong>.</span></li>
+            <li class="resp-step"><div class="step-num">5</div><span><strong>Pilih Salin URL</strong> atau <strong>Copy Link Address</strong>.</span></li>
+            <li class="resp-step"><div class="step-num">6</div><span><strong>Kembali ke Web</strong> dan tempel link verifikasi di kolom yang tersedia.</span></li>
+            <li class="resp-step"><div class="step-num">7</div><span><strong>Kirim link verifikasi</strong> lalu pencet tombol <strong>Verifikasi</strong>.</span></li>
+          </ul>`;
+          html += `<div class="resp-message" style="margin-top:12px;color:#00e676;font-size:12px;">📌 <em>Catatan:</em> Sesi email Anda (${email}) telah disimpan secara otomatis.</div>`;
+          document.getElementById('resp-body').innerHTML = html;
+          box.classList.add('show');
+
+          // Pindah ke step 2
+          goToStep(2);
+        } else {
+          showError(JSON.stringify(data, null, 2));
+        }
       } catch(e) {
         hideProcessing();
         showError('Koneksi gagal: ' + e.message);
       } finally { setBtn('btn-send', false); }
     }
 
-    // Verifikasi (dengan link)
+    // Verifikasi (STEP 2)
     async function doVerify() {
       const email = getEmail();
       const link = getLink();
@@ -825,7 +897,11 @@
         });
         const data = await res.json();
         hideProcessing();
-        (res.ok && data.status) ? showSuccess(email, data) : showError(JSON.stringify(data, null, 2));
+        if (res.ok && data.status) {
+          showSuccess(email, data, true);
+        } else {
+          showError(JSON.stringify(data, null, 2));
+        }
       } catch(e) {
         hideProcessing();
         showError('Koneksi gagal: ' + e.message);
@@ -836,6 +912,7 @@
     document.addEventListener('DOMContentLoaded', function() {
       document.getElementById('email-target').value = '';
       document.getElementById('link-verify').value = '';
+      goToStep(1);
     });
   </script>
 </body>
