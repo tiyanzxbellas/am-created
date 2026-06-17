@@ -131,7 +131,11 @@
     }
 
     /* HEADER */
-    .app-header { text-align: center; margin-bottom: 28px; }
+    .app-header {
+      text-align: center;
+      margin-bottom: 28px;
+      position: relative;
+    }
     .logo-mark {
       display: inline-flex; align-items: center; justify-content: center;
       width: 48px; height: 48px;
@@ -150,6 +154,40 @@
       margin-bottom: 4px; 
     }
     .app-sub { font-size: 11px; color: #37474f; letter-spacing: 2px; text-transform: uppercase; }
+
+    /* TUTORIAL BUTTON - Icon Video + Text */
+    .tutorial-trigger {
+      position: absolute;
+      top: 0;
+      right: 0;
+      background: rgba(0,230,118,0.06);
+      border: 1px solid rgba(0,230,118,0.12);
+      border-radius: 30px;
+      padding: 6px 14px 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      color: #00e676;
+      cursor: pointer;
+      font-size: 12px;
+      font-weight: 500;
+      transition: all 0.25s ease;
+      text-decoration: none;
+      letter-spacing: 0.3px;
+    }
+    .tutorial-trigger i {
+      font-size: 16px;
+    }
+    .tutorial-trigger:hover {
+      background: rgba(0,230,118,0.16);
+      transform: scale(1.03);
+      box-shadow: 0 0 20px rgba(0,230,118,0.15);
+      border-color: rgba(0,230,118,0.3);
+    }
+    .tutorial-trigger .label-text {
+      font-size: 11px;
+      opacity: 0.8;
+    }
 
     /* STATUS */
     .status-bar {
@@ -373,9 +411,137 @@
       background: linear-gradient(135deg, #00897b, #00bcd4) !important;
     }
 
+    /* TUTORIAL MODAL */
+    .tutorial-modal {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.85);
+      z-index: 2000;
+      align-items: center;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      padding: 20px;
+      animation: fadeIn 0.3s ease;
+    }
+    .tutorial-modal.active { display: flex; }
+    @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+    .tutorial-modal-content {
+      background: #0a1a15;
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 20px;
+      padding: 32px 28px;
+      max-width: 520px;
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+      position: relative;
+    }
+    .tutorial-modal-content::-webkit-scrollbar { width: 4px; }
+    .tutorial-modal-content::-webkit-scrollbar-thumb { background: rgba(0,230,118,0.2); border-radius: 2px; }
+
+    .tutorial-close {
+      position: sticky;
+      top: 0;
+      float: right;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 30px;
+      width: 32px; height: 32px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #78909c;
+      cursor: pointer;
+      font-size: 16px;
+      transition: all 0.2s ease;
+      z-index: 10;
+    }
+    .tutorial-close:hover { background: rgba(244,67,54,0.2); color: #ef5350; border-color: rgba(244,67,54,0.3); }
+
+    .tutorial-title {
+      font-size: 20px;
+      font-weight: 700;
+      background: linear-gradient(135deg, #00e676, #1565c0);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .tutorial-sub {
+      font-size: 13px;
+      color: #546e7a;
+      margin-bottom: 24px;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      padding-bottom: 16px;
+    }
+
+    .tutorial-step {
+      display: flex;
+      gap: 14px;
+      margin-bottom: 22px;
+      align-items: flex-start;
+    }
+    .tutorial-step-icon {
+      flex-shrink: 0;
+      width: 32px; height: 32px;
+      background: rgba(0,230,118,0.08);
+      border: 1px solid rgba(0,230,118,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #00e676;
+      font-size: 14px;
+    }
+    .tutorial-step-text {
+      font-size: 14px;
+      color: #b0bec5;
+      line-height: 1.6;
+    }
+    .tutorial-step-text strong {
+      color: #e0f7fa;
+      font-weight: 600;
+    }
+    .tutorial-step-text .highlight {
+      color: #00e676;
+      font-weight: 500;
+    }
+
+    .tutorial-img-note {
+      background: rgba(0,230,118,0.04);
+      border: 1px dashed rgba(0,230,118,0.15);
+      border-radius: 10px;
+      padding: 12px 16px;
+      margin: 18px 0 6px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      color: #78909c;
+      font-size: 13px;
+    }
+    .tutorial-img-note i {
+      color: #00e676;
+      font-size: 20px;
+    }
+    .tutorial-img-note a {
+      color: #00bcd4;
+      text-decoration: none;
+      border-bottom: 1px dotted rgba(0,188,212,0.3);
+    }
+    .tutorial-img-note a:hover { color: #00e676; }
+
     @media (max-width: 480px) {
       .card { padding: 24px 18px; }
       .action-row { flex-direction: column; }
+      .tutorial-modal-content { padding: 24px 16px; }
+      .tutorial-step { gap: 10px; }
+      .tutorial-trigger { padding: 4px 10px 4px 8px; }
+      .tutorial-trigger .label-text { font-size: 10px; }
     }
   </style>
 </head>
@@ -402,6 +568,11 @@
       <div class="logo-mark">A</div>
       <div class="app-title">Am Created</div>
       <div class="app-sub">Premium Email Manager</div>
+      <!-- TOMBOL TUTORIAL IKON VIDEO + TEXT "PANDUAN" -->
+      <div class="tutorial-trigger" id="tutorialBtn" title="Lihat Tutorial">
+        <i class="ti ti-player-play-filled"></i>
+        <span class="label-text">Panduan</span>
+      </div>
     </div>
 
     <div class="status-bar">
@@ -457,6 +628,65 @@
     <div class="footer">Gunakan dengan bijak &bull; Premium API v1</div>
   </div>
 
+  <!-- TUTORIAL MODAL -->
+  <div class="tutorial-modal" id="tutorialModal">
+    <div class="tutorial-modal-content">
+      <div class="tutorial-close" id="tutorialClose"><i class="ti ti-x"></i></div>
+      <div class="tutorial-title"><i class="ti ti-video"></i> Panduan Salin Link</div>
+      <div class="tutorial-sub">Ikuti langkah-langkah berikut untuk mendapatkan link verifikasi dari email</div>
+
+      <div class="tutorial-step">
+        <div class="tutorial-step-icon"><i class="ti ti-mail"></i></div>
+        <div class="tutorial-step-text">
+          <strong>1. Kirim email</strong><br>
+          Masukkan <span class="highlight">alamat email</span> di kolom "Email Target" dan tekan <strong>"Kirim Link"</strong>.
+          Sistem akan mengirimkan link verifikasi ke email tersebut.
+        </div>
+      </div>
+
+      <div class="tutorial-step">
+        <div class="tutorial-step-icon"><i class="ti ti-inbox"></i></div>
+        <div class="tutorial-step-text">
+          <strong>2. Buka email & cari di Spam</strong><br>
+          Buka aplikasi email Anda, lalu masuk ke folder <span class="highlight">Spam</span> atau <strong>Junk</strong>.
+          Email verifikasi biasanya masuk ke Spam.
+        </div>
+      </div>
+
+      <div class="tutorial-step">
+        <div class="tutorial-step-icon"><i class="ti ti-message"></i></div>
+        <div class="tutorial-step-text">
+          <strong>3. Cari chat "noreply"</strong><br>
+          Di folder Spam, cari email dari pengirim <span class="highlight">noreply</span>.
+          Buka email tersebut untuk melihat link verifikasi.
+        </div>
+      </div>
+
+      <div class="tutorial-step">
+        <div class="tutorial-step-icon"><i class="ti ti-copy"></i></div>
+        <div class="tutorial-step-text">
+          <strong>4. Salin link</strong><br>
+          <strong>Tekan lama</strong> pada link verifikasi di dalam email, lalu pilih <span class="highlight">"Salin"</span> atau <strong>"Copy"</strong>.
+          Pastikan link tersalin dengan utuh.
+        </div>
+      </div>
+
+      <div class="tutorial-step">
+        <div class="tutorial-step-icon"><i class="ti ti-link"></i></div>
+        <div class="tutorial-step-text">
+          <strong>5. Tempel & verifikasi</strong><br>
+          Tempelkan link yang sudah disalin ke kolom <strong>"Link Verifikasi"</strong>,
+          lalu tekan tombol <strong>"Verifikasi"</strong> untuk menyelesaikan proses.
+        </div>
+      </div>
+
+      <div class="tutorial-img-note">
+        <i class="ti ti-photo"></i>
+        <span>Lihat contoh cara salin link verifikasi di gambar: <a href="https://c.tyn.biz.id/H5bP.jpg" target="_blank">c.tyn.biz.id/H5bP.jpg</a></span>
+      </div>
+    </div>
+  </div>
+
   <script>
     const API_BASE = 'https://zelapioffciall.dpdns.org/api/v1/premium';
     const API_KEY = 'zelapi-4hwd4va';
@@ -488,6 +718,21 @@
         app.classList.add('visible');
       }, 700);
     }, 2800);
+
+    // Tutorial Modal
+    const tutorialBtn = document.getElementById('tutorialBtn');
+    const tutorialModal = document.getElementById('tutorialModal');
+    const tutorialClose = document.getElementById('tutorialClose');
+
+    tutorialBtn.addEventListener('click', () => {
+      tutorialModal.classList.add('active');
+    });
+    tutorialClose.addEventListener('click', () => {
+      tutorialModal.classList.remove('active');
+    });
+    tutorialModal.addEventListener('click', (e) => {
+      if (e.target === tutorialModal) tutorialModal.classList.remove('active');
+    });
 
     function showProcessing(label) {
       document.getElementById('proc-label').textContent = label;
